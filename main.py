@@ -1,0 +1,1 @@
+print("Initialisation du projet")
