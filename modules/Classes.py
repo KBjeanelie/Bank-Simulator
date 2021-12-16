@@ -24,6 +24,7 @@ class Humain:
     """
             GETTERS
         """
+
     def __ID__(self):
         return self.__ID__
 
@@ -293,49 +294,24 @@ class SavingsAccount(Account):
         self.tax = 0
 
 
+@dataclass()
 class SystemGAB:
 
     def __init__(self):
         self.username = ""
         self.password = ""
 
-    def username(self):
+    def username(self) -> str:
         return self.username
+
+    def password(self) -> str:
+        return self.password
 
     def set_username(self, new_username):
         self.username = new_username
 
     def set_password(self, new_passwd):
         self.password = new_passwd
-
-    def login(self, client: Client):
-        print("---------------------------- SE CONNECTER -------------------------------------")
-        user = input("Username : ")
-        passwd = input("Password : ")
-
-        while user != client.gab_account.username or passwd != client.gab_account.password:
-            print("ERREUR: Username ou password est incorect\n")
-            user = input("Username : ")
-            passwd = input("Password : ")
-
-        self.username = client.gab_account.username
-        self.password = client.gab_account.password
-        return user, passwd
-
-    """
-    def check_balance(self, client: Client):
-        print("--------------------------------- CONSULTATION DU SOLDE -----------------------------------------")
-        rep = choose_type_account()
-        if rep == 1:
-            print("Numero de Compte  : ", self.account_number)
-            print("Votre solde est de:", client.current_account.get_amount())
-            print("--------------------------------------------------------------------------")
-            return
-
-        print("Numero de Compte  : ", self.account_number)
-        print("Votre solde est de:", client.savings_account.get_amount())
-        print("--------------------------------------------------------------------------")
-    """
 
 
 class Client(Humain):

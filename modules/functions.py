@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from Classes import Client
 from messages import insufficient_balance_error, check_int, check_balance
 
@@ -10,53 +9,33 @@ def message(m: str, count: str | int = ""):
     print("---------------------------------------------------------------------------------------------")
 
 
+# --------------------------------------------------------------------------------------------------------#
+#               the functions below are used in the pragrammain  interface
 # -------------------------------------------------------------------------------------------------------#
-#               the functions below are used in the gab system
-# -------------------------------------------------------------------------------------------------------#
+def views(q1, q2, q3, title) -> int:
+    print("---------------------------------------------------------------------------------------------")
+    print(f"|                                 KUB'S BANK For {title}                                     |")
+    print("---------------------------------------------------------------------------------------------")
+    print()
+    print(f"1 : {q1}")
+    print(f"2 : {q2}")
+    print(f"3 : {q3}")
+    print(f"4 : exit")
 
-def choose_type_account():
-    print("Choisir le type de compte : ")
-    print("1 : Courant")
-    print("2 : Epargne")
-    choose = input("Enter>> ")
-    choosed = check_int(choose)
+    response = input("Enter>> ")
+    i = True
+    while i:
+        response_verified = check_int(response)
+        if 1 <= response_verified <= 4:
+            response = response_verified
+            i = False
 
-    if choosed == 1:
-        return 1
-    return 2
-
-
-def money_deposit(client: Client):
-    print("----------------------------- DEPOT D'ARGENT -----------------------------------")
-    rep = choose_type_account()
-    amount = input("Entrer la somme : ")
-    amount_verified = check_int(amount)
-    if rep == 1:
-        client.current_account.deposit(amount_verified)
-        check_balance(client.current_account.get_amount(), "Dépot éffectuer avec succès :)")
-        return
-
-    client.savings_account.deposit(amount_verified)
-    check_balance(client.savings_account.get_amount(), "Dépot éffectuer avec succès :)")
+    return int(response)
 
 
-def withdraw_money(client: Client):
-    print("----------------------------- RETIRER DE L'ARGENT -----------------------------------")
-    rep = choose_type_account()
-    amount = input("Entrer le montant : ")
-    amount_verified = check_int(amount)
-    if rep == 1:
-        if not client.current_account.withdraw_money(amount_verified):
-            insufficient_balance_error("ERREUR: Echec de retrait")
-            return
-        check_balance(client.current_account.get_amount(), "Retrait éffectué avec succès :)")
-        return
-
-    if client.savings_account.withdraw_money(amount_verified):
-        insufficient_balance_error("ERREUR: Echec de retrait")
-        return
-
-    check_balance(client.savings_account.get_amount(), "Retrait éffectué avec succès :)")
+def programme_views() -> int:
+    rep = views("Casier Account", " Customer Account", "System GAB (Customer login)", "EveryOne")
+    return rep
 
 
 # -------------------------------------------------------------------------------------------------------#
@@ -149,30 +128,6 @@ def cashier_login():
     return True
 
 
-# --------------------------------------------------------------------------------------------------------#
-#               the functions below are used in the pragrammain  interface
-# -------------------------------------------------------------------------------------------------------#
-def views(q1, q2, q3, title) -> int:
-    print("---------------------------------------------------------------------------------------------")
-    print(f"|                                 KUB'S BANK For {title}                                     |")
-    print("---------------------------------------------------------------------------------------------")
-    print()
-    print(f"1 : {q1}")
-    print(f"2 : {q2}")
-    print(f"3 : {q3}")
-    print(f"4 : exit")
-
-    response = input("Enter>> ")
-    i = True
-    while i:
-        response_verified = check_int(response)
-        if 1 <= response_verified <= 4:
-            response = response_verified
-            i = False
-
-    return int(response)
-
-
 def cashier_base():
     rep = views("Lister les Client", "Ajouter un Client", "Supprimer un Client", "CASHIER")
     return rep
@@ -200,10 +155,117 @@ def cashier_main(clients: list[Client]):
                 i = False
 
 
-def system_gab():
+# ------------------------------------------------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------------------------------------------------- #
+
+# -------------------------------------------------------------------------------------------------------#
+#               the functions below are used in the gab system
+# -------------------------------------------------------------------------------------------------------#
+
+def choose_type_account():
+    print("Choisir le type de compte : ")
+    print("1 : Courant")
+    print("2 : Epargne")
+    choose = input("Enter>> ")
+    choosed = check_int(choose)
+
+    if choosed == 1:
+        return 1
+    return 2
+
+
+def system_gab_login(clients: list[Client]) -> int:
+    found = False
+    position: int = 0
+    print("---------------------------- SE CONNECTER -------------------------------------")
+    user = input("Username : ")
+    passwd = input("Password : ")
+
+    while not found:
+        for client in clients:
+            if user == client.gab_account.username and passwd == client.gab_account.password:
+                return position
+
+            position += 1
+
+        print("Username or password incorect :(")
+        print()
+        user = input("Username : ")
+        passwd = input("Password : ")
+
+
+def system_gab_check_balance(client: Client):
+    print("--------------------------------- CONSULTATION DU SOLDE -----------------------------------------")
+    rep = choose_type_account()
+    if rep == 1:
+        print("--------------------------------------------------------------------------")
+        print("Numero de Compte   :", client.current_account.get_account_number())
+        print("Type de Compte     : Courant")
+        print("Votre solde est de :", client.current_account.get_amount(), "F CFA")
+        print("--------------------------------------------------------------------------")
+        return
+
+    print("--------------------------------------------------------------------------")
+    print("Numero de Compte     :", client.savings_account.get_account_number())
+    print("Type de Compte       : Epargne")
+    print("Votre solde est de   :", client.savings_account.get_amount(), "F CFA")
+    print("--------------------------------------------------------------------------")
+
+
+def system_gab_base():
     rep = views("Consulter son Solde", "Dépot d'argent", "Retrait d'argent", "GAB System")
-
-
-def programme_views() -> int:
-    rep = views("Casier Account", " Customer Account", "System GAB (Customer login)", "EveryOne")
     return rep
+
+
+def money_deposit(client: Client):
+    print("----------------------------- DEPOT D'ARGENT -----------------------------------")
+    rep = choose_type_account()
+    amount = input("Entrer la somme : ")
+    amount_verified = check_int(amount)
+    if rep == 1:
+        client.current_account.deposit(amount_verified)
+        check_balance(client.current_account.get_amount(), "Dépot éffectuer avec succès :)")
+        return
+
+    client.savings_account.deposit(amount_verified)
+    check_balance(client.savings_account.get_amount(), "Dépot éffectuer avec succès :)")
+
+
+def withdraw_money(client: Client):
+    print("----------------------------- RETIRER DE L'ARGENT -----------------------------------")
+    rep = choose_type_account()
+    amount = input("Entrer le montant : ")
+    amount_verified = check_int(amount)
+    if rep == 1:
+        if not client.current_account.withdraw_money(amount_verified):
+            insufficient_balance_error("ERREUR: Echec de retrait")
+            return
+        check_balance(client.current_account.get_amount(), "Retrait éffectué avec succès :)")
+        return
+
+    if not client.savings_account.withdraw_money(amount_verified):
+        insufficient_balance_error("ERREUR: Echec de retrait")
+        return
+
+    check_balance(client.savings_account.get_amount(), "Retrait éffectué avec succès :)")
+
+
+def system_gab_main(clients: list[Client]):
+    i = True
+    customer_index: int = system_gab_login(clients)
+    while i:
+        r = system_gab_base()
+        if r == 1:
+            system_gab_check_balance(clients[customer_index])
+            r1 = input("Appuyez sur touche pour repartir\nEnter")
+        elif r == 2:
+            money_deposit(clients[customer_index])
+            r1 = input("Appuyez sur touche pour repartir\nEnter")
+        elif r == 3:
+            withdraw_money(clients[customer_index])
+            r1 = input("Appuyez sur touche pour repartir\nEnter")
+        else:
+            message("Deconnexion\nA bientôt :)")
+            i = False
