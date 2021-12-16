@@ -1,33 +1,7 @@
 from __future__ import annotations
 
-
-def check_int(var: str) -> int:
-    while var.isalpha():
-        print("ERREUR : Entrer un nombre : ")
-        var = input("Enter>> ")
-
-    return int(var)
-
-
-def insufficient_balance_error(message: str = ""):
-    print("-------------------------------------------------------------------------------------------")
-    print(message)
-    print("Votre Solde est insuffisant ")
-    print("-------------------------------------------------------------------------------------------")
-
-
-def check_balance(amount: int | float, message: str = ""):
-    print("-------------------------------------------------------------------------------------------")
-    print(message)
-    print("Votre noveau solde est de", amount, "F CFA")
-    print("-------------------------------------------------------------------------------------------")
-
-
-def sample_echec_message(message: str):
-    print("-------------------------------------------------------------------------------------------")
-    print("ERREUR: Echec de Transfert")
-    print(message)
-    print("-------------------------------------------------------------------------------------------")
+from Classes import Client
+from messages import insufficient_balance_error, check_int, check_balance
 
 
 def message(m: str, count: str | int = ""):
@@ -92,9 +66,10 @@ cahier = "uba"
 passwd_cashier = "uba1234"
 
 
-def create_customer() -> object:
+def create_customer() -> Client:
     """
-    this function is used to create a new customer with all the necessary information and also to create an ATM account for him
+    this function is used to create a new customer with all the necessary information and also to create an ATM
+    account for him
     :return: objet of Client
     """
     print("---------------------------------- CREATION D'UN COMPTE CLIENT ---------------------------------------")
@@ -103,12 +78,11 @@ def create_customer() -> object:
     dbirth = input("Date de Naissance du Client : ")
     sex = input("Sexe du Client                 : ")
     adress = input("Adresse du Client           : ")
-    customer = Client(name, fname, dbirth, sex, adress)
+
     print("-------------------------------- Information supplementaire -------------------------------")
     email = input("Email du Client              :")
     tel = input("Numero de téléphone du Client  : ")
-    customer.set_email(email)
-    customer.set_tel(tel)
+    customer = Client(last_name=name, firstname=fname, birthday=dbirth, email=email, sexe=sex, adress=adress, tel=tel)
     print("-------------------------- Information sur le system GAB -----------------------------------")
     username = input("Nom d'utilisateur du Client : ")
     passwd = input("Mot de passe du Client        : ")
@@ -123,7 +97,7 @@ def del_client(clients: list[Client], index: int):
     This function is used to delete all information about client by his index
     :param clients: list of Client objet
     :param index: the indice of object in the list
-    :return: nono
+    :return: none
     """
     print("---------------------------------------------------------------------------------------------")
     rep = input("Voulez vraiment supprimez ce client ? (o/n) : ")
@@ -142,7 +116,7 @@ def show_all_customers(clients: list[Client]):
     """
     print("-------------------------------------- Liste de Client --------------------------------------")
     print()
-    count = 0
+    count = len(clients)
 
     if count == 0:
         message("Aucun client enregistrer")
@@ -150,13 +124,8 @@ def show_all_customers(clients: list[Client]):
 
     for client in clients:
         print("---------------------------------------------------------------------------------------------")
-        print(client.__ID__, "       -       ", client.get_last_name(), "      -       ",
-              client.get_first_name(), "      -      ", client.get_birthday(), "      -    ",
-              client.get_sexe(), "     -      ", client.get_adress(), "        -         ",
-              client.get_email(), "     -     ", client.get_tel()
-              )
-        count += 1
-
+        print(client.__ID__, "| -  |", client.last_name, "|  -  |", client.firstname, "|  -  |", client.birthday,
+              "|  -  |", client.sexe, "|  -  |", client.adress, "|  -  |", client.email, "|  -  |", client.tel)
     message("Total :", count)
 
 
@@ -165,7 +134,8 @@ def cashier_login():
     this function allows the cashier to authenticate and returns a boolean
     :return: bool
     """
-    print("---------------------------------- CASSIER CONNFECTION ----------------------------------------------")
+
+    print("---------------------------------- CASSIER CONNECTION ----------------------------------------------")
     user = input("Cashier username    : ")
     passwd = input("Cashier password  : ")
 
@@ -182,7 +152,7 @@ def cashier_login():
 # --------------------------------------------------------------------------------------------------------#
 #               the functions below are used in the pragrammain  interface
 # -------------------------------------------------------------------------------------------------------#
-def views(q1, q2, q3, title):
+def views(q1, q2, q3, title) -> int:
     print("---------------------------------------------------------------------------------------------")
     print(f"|                                 KUB'S BANK For {title}                                     |")
     print("---------------------------------------------------------------------------------------------")
@@ -203,28 +173,37 @@ def views(q1, q2, q3, title):
     return int(response)
 
 
-def programme_views() -> int:
-    rep = views("Casier Account", " Customer Account", "System GAB (Customer login)", "EveryOne")
-    return rep
-
-
 def cashier_base():
     rep = views("Lister les Client", "Ajouter un Client", "Supprimer un Client", "CASHIER")
     return rep
 
 
-# def system_gab():
-#    rep = views("Consulter son Solde", "Dépot d'argent", "Retrait d'argent", "GAB System")
-
-
-def cashier_main():
+def cashier_main(clients: list[Client]):
     i = True
     if cashier_login():
         while i:
             r = cashier_base()
             if r == 1:
-                show_all_customers()
+                show_all_customers(clients)
                 r1 = input("Appuyez sur touche pour repartir\nEnter")
+            elif r == 2:
 
-            if r == 2:
-                new_customers = create_customer()
+                new_customers: Client = create_customer()
+                clients.append(new_customers)
+                r1 = input("Appuyez sur touche pour repartir\nEnter")
+            elif r == 3:
+                print("Coming soon")
+                # del_client(clients, 5)
+                r1 = input("Appuyez sur touche pour repartir\nEnter")
+            else:
+                message("Deconnexion\nA bientôt :)")
+                i = False
+
+
+def system_gab():
+    rep = views("Consulter son Solde", "Dépot d'argent", "Retrait d'argent", "GAB System")
+
+
+def programme_views() -> int:
+    rep = views("Casier Account", " Customer Account", "System GAB (Customer login)", "EveryOne")
+    return rep

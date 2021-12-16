@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from modules.functions import insufficient_balance_error, check_int, check_balance, sample_echec_message
+from messages import insufficient_balance_error, check_int, check_balance, sample_echec_message
 
 
 @dataclass
 class Humain:
+    count = 0
     last_name: str
     firstname: str
     birthday: str
@@ -16,11 +17,15 @@ class Humain:
     tel: str
 
     def __post_init__(self):
+        Humain.count += 1
+        self.__ID__: int = Humain.count
         self.fullname = f"{self.firstname} {self.last_name}"
 
     """
             GETTERS
         """
+    def __ID__(self):
+        return self.__ID__
 
     def fullname(self):
         return self.fullname

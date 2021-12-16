@@ -1,1 +1,0 @@
-print("Initialisation du projet")
