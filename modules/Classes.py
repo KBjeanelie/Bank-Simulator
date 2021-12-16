@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from modules.functions import insufficient_balance_error, check_int, check_balance, sample_echec_message
+
 
 @dataclass
 class Humain:
@@ -134,16 +136,16 @@ class Humain:
 
 
 class Account:
-    count = 0
+    count: int = 0
 
     def __init__(self):
         Account.count += 1
-        self.bank_code = 21007
-        self.branch_code = 10000
-        self.account_number = Account.count
-        self.amount = 0
-        self.tax = 0
-        self.TVA = 1043
+        self.bank_code: int = 21007
+        self.branch_code: int = 10000
+        self.account_number: int = Account.count
+        self.amount: int | float = 0
+        self.tax: int | float = 0
+        self.TVA: int = 1043
 
     def bank_code(self):
         return self.bank_code
@@ -158,7 +160,7 @@ class Account:
         self.amount += sum_add
         return True
 
-    def withdraw_money(self, sum_remove: float) -> bool:
+    def withdraw_money(self, sum_remove: float | int) -> bool:
         self.tax = (sum_remove * 12) / 100
         if sum_remove + self.tax >= self.amount:
             return False
@@ -169,8 +171,67 @@ class Account:
     def get_account_number(self):
         return str(self.bank_code) + str(self.branch_code) + str(self.account_number)
 
-    def get_amount(self):
+    def get_amount(self) -> int | float:
         return self.amount
+
+    def bank_transfert(self, clients: list[Client]):
+        print("----------------------------------- Transfert d'argent ------------------------------")
+        sender_account_number = input("Saisir le numéro du compte émetteur          : ")
+        beneficiary_account_number = input("Saisir le numéro du compte bénéficiaire :")
+        transfer_amount = input("Saisir le montant du virement                      : ")
+        transfer_amount_cheked: int = check_int(transfer_amount)
+        beneficiary_name = input("Choisir une récurrence ou non                     :")
+        beneficiary_firstname = input("Choisir un Prenom                            :")
+
+        self.tax = (transfer_amount_cheked * 25) / 100
+
+        if sender_account_number != self.get_account_number():
+            sample_echec_message("Le numéro du compte émetteur n'existe pas")
+            return
+
+        found: bool = False
+
+        for client in clients:
+            if client.current_account.get_account_number() == beneficiary_account_number:
+                if client.current_account.deposit(transfer_amount_cheked):
+                    self.amount -= transfer_amount_cheked + self.tax
+                    found = True
+                    break
+                else:
+                    insufficient_balance_error("ERREUR: Echec de transfert")
+                    return
+        if found:
+            print("Non du bénéficiare               :", beneficiary_name)
+            print("Prenom du bénéficiare            :", beneficiary_firstname)
+            print("Numéro de compte du bénéficiare  :", beneficiary_account_number)
+            print("Type de compte du bénéficiare    : Courant")
+            print("Montant tranferé                 :", transfer_amount, "F CFA")
+            print("TVA                              :", self.TVA)
+            print("Total                            :", self.TVA + int(transfer_amount), "F CFA")
+            check_balance(self.amount, "Transfert d'argent réaliser avec succès")
+            return
+
+        sample_echec_message("Le numéro du compte bénéficiaire n'existe pas")
+
+    def payment_invoice(self):
+        print("------------------------------Payement de Facture ------------------------------------------")
+        product_name = input("Entrer le nom du produit  :")
+        amount_product = input("Entrer le montant : ")
+        amount_checked = check_int(amount_product)
+
+        if self.amount <= amount_checked + self.TVA:
+            insufficient_balance_error("ERREUR: Echec de payement :(")
+            return
+
+        self.amount -= amount_checked + self.TVA
+        print("-------------------------------------------------------------------------------------------")
+        print("Payement effectué avec succès !")
+        print("-------------------------------------------------------------------------------------------")
+        print("Nom du produit  :", product_name)
+        print("Prix du produit :", amount_checked, "F CFA")
+        print("TVA             :", self.TVA)
+        print("Total           :", amount_checked + self.TVA, "F CFA")
+        check_balance(self.amount)
 
 
 class CurrentAccount(Account):
