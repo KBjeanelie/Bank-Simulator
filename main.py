@@ -1,5 +1,5 @@
 from Classes import Client
-from modules.functions import views, cashier_main, message, system_gab_main
+from modules.functions import views, cashier_main, message, system_gab_main, customer_account_main
 
 Customers: list[Client] = []
 
@@ -31,7 +31,7 @@ while launch:
     if choice == 1:
         cashier_main(Customers)
     elif choice == 2:
-        pass
+        customer_account_main(Customers)
     elif choice == 3:
         system_gab_main(Customers)
     else:

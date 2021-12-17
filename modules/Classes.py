@@ -5,6 +5,12 @@ from dataclasses import dataclass
 from messages import insufficient_balance_error, check_int, check_balance, sample_echec_message
 
 
+def ms(title: str):
+    print("----------------------------------------------------------------------------------------")
+    print(title)
+    print("----------------------------------------------------------------------------------------")
+
+
 @dataclass
 class Humain:
     count = 0
@@ -22,8 +28,8 @@ class Humain:
         self.fullname = f"{self.firstname} {self.last_name}"
 
     """
-            GETTERS
-        """
+        GETTERS
+    """
 
     def __ID__(self):
         return self.__ID__
@@ -220,7 +226,7 @@ class Account:
         sample_echec_message("Le numéro du compte bénéficiaire n'existe pas")
 
     def payment_invoice(self):
-        print("------------------------------Payement de Facture ------------------------------------------")
+        print("------------------------------ Payement de Facture ------------------------------------------")
         product_name = input("Entrer le nom du produit  :")
         amount_product = input("Entrer le montant : ")
         amount_checked = check_int(amount_product)
@@ -230,9 +236,7 @@ class Account:
             return
 
         self.amount -= amount_checked + self.TVA
-        print("-------------------------------------------------------------------------------------------")
-        print("Payement effectué avec succès !")
-        print("-------------------------------------------------------------------------------------------")
+        ms("Payement effectué avec succès !")
         print("Nom du produit  :", product_name)
         print("Prix du produit :", amount_checked, "F CFA")
         print("TVA             :", self.TVA)
@@ -245,24 +249,25 @@ class CurrentAccount(Account):
         super(CurrentAccount, self).__init__()
 
     def transfer_of_current_to_saving(self, client):
-        print("----------------------------------- Transfert d'argent ------------------------------")
+        print()
+        print("-------------------------- Transfert d'argent (Courant vers Epargne) -----------------------------")
         amount = input("Entrer le montant : ")
         send_amount = check_int(amount)
         self.tax = (send_amount * 25) / 100
         if client.current_account.get_amount() <= send_amount:
-            print("Impossible de transferer de l'argent :(")
-            print("Fonds Insuffisant !")
+            insufficient_balance_error("ERREUR: Echec de Transfert :(")
             return
 
         client.savings_account.deposit(send_amount)
         client.current_account.amount -= self.tax
 
         print("Transfert effectué avec succès :)")
+        print("-------------------------------------------------------------------------------------------")
         print("Montant transferé              :", send_amount)
         print("Frais de transport             :", self.tax, "F CFA")
         print("Numéro de Compte               :", client.savings_account.get_account_number())
         print("Type de Compte                 : Epargne")
-        print("-------------------------------------------------------------------------------------------")
+        check_balance(client.current_account.get_amount())
         self.tax = 0
 
 
@@ -273,25 +278,46 @@ class SavingsAccount(Account):
         self.is_lock = False
 
     def current_savings_transfer(self, client):
-        print("----------------------------------- Transfert d'argent ------------------------------")
+        if self.is_lock:
+            ms("Transfert non disponible\nVotre compte a étébloqué")
+            return
+
+        print()
+        print("-------------------------- Transfert d'argent (Courant vers Epargne) -----------------------------")
         amount = input("Entrer le montant : ")
         send_amount = check_int(amount)
         self.tax = (send_amount * 35) / 100
         if client.current_account.get_amount() <= send_amount:
-            print("Impossible de transferer de l'argent :(")
-            print("Fonds Insuffisant !")
+            insufficient_balance_error("ERREUR: Echec de Transfert :(")
             return
 
         client.current_account.deposit(send_amount)
         client.savings_account.amount -= self.tax
 
         print("Transfert effectué avec succès :)")
+        print("-------------------------------------------------------------------------------------------")
         print("Montant transferé              :", send_amount, "F CFA")
         print("Frais de transport             :", self.tax, "F CFA")
         print("Numéro de Compte               :", client.current_account.get_account_number())
         print("Type de Compte                 : Courant")
-        print("-------------------------------------------------------------------------------------------")
+        check_balance(client.current_account.get_amount())
         self.tax = 0
+
+    def lock_account(self):
+        print()
+        print("-------------------------- Transfert d'argent (Courant vers Epargne) -----------------------------")
+        print("Voulez vous bloqué votre compte ? (o/n) ")
+        rep = input("Enter>> ")
+        while rep != "o" and rep != "n":
+            rep = input("Enter>> ")
+
+        if rep == "o":
+            self.is_lock = True
+            ms("Votre compte épargne a été bloqué\nVous ne pouvez plus éffectuer des virement ou payement")
+            return
+
+        self.is_lock = False
+        ms("Compte non bloqué ou débloqué")
 
 
 @dataclass()
@@ -349,3 +375,4 @@ class Client(Humain):
             print("Compte bloqué : YES")
         else:
             print("Compte bloqué : NO")
+        print()

@@ -9,6 +9,12 @@ def message(m: str, count: str | int = ""):
     print("---------------------------------------------------------------------------------------------")
 
 
+def app_bar(title: str):
+    print("---------------------------------------------------------------------------------------------")
+    print(f"|                               {title}                                   |")
+    print("---------------------------------------------------------------------------------------------")
+
+
 # --------------------------------------------------------------------------------------------------------#
 #               the functions below are used in the pragrammain  interface
 # -------------------------------------------------------------------------------------------------------#
@@ -36,6 +42,10 @@ def views(q1, q2, q3, title) -> int:
 def programme_views() -> int:
     rep = views("Casier Account", " Customer Account", "System GAB (Customer login)", "EveryOne")
     return rep
+
+
+# ------------------------------------------------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------------------------------------------------- #
 
 
 # -------------------------------------------------------------------------------------------------------#
@@ -114,7 +124,7 @@ def cashier_login():
     :return: bool
     """
 
-    print("---------------------------------- CASSIER CONNECTION ----------------------------------------------")
+    app_bar("CASHIER ACCOUNT LOGIN")
     user = input("Cashier username    : ")
     passwd = input("Cashier password  : ")
 
@@ -140,16 +150,15 @@ def cashier_main(clients: list[Client]):
             r = cashier_base()
             if r == 1:
                 show_all_customers(clients)
-                r1 = input("Appuyez sur touche pour repartir\nEnter")
+                input("Appuyez sur touche pour repartir\nEnter")
             elif r == 2:
-
                 new_customers: Client = create_customer()
                 clients.append(new_customers)
-                r1 = input("Appuyez sur touche pour repartir\nEnter")
+                input("Appuyez sur touche pour repartir\nEnter")
             elif r == 3:
                 print("Coming soon")
                 # del_client(clients, 5)
-                r1 = input("Appuyez sur touche pour repartir\nEnter")
+                input("Appuyez sur touche pour repartir\nEnter")
             else:
                 message("Deconnexion\nA bientôt :)")
                 i = False
@@ -157,8 +166,7 @@ def cashier_main(clients: list[Client]):
 
 # ------------------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------------------------------------------------------------------------- #
-# ------------------------------------------------------------------------------------------------------------------- #
-# ------------------------------------------------------------------------------------------------------------------- #
+
 
 # -------------------------------------------------------------------------------------------------------#
 #               the functions below are used in the gab system
@@ -179,7 +187,7 @@ def choose_type_account():
 def system_gab_login(clients: list[Client]) -> int:
     found = False
     position: int = 0
-    print("---------------------------- SE CONNECTER -------------------------------------")
+    app_bar("SYSTEM ATM LOGIN")
     user = input("Username : ")
     passwd = input("Password : ")
 
@@ -189,7 +197,7 @@ def system_gab_login(clients: list[Client]) -> int:
                 return position
 
             position += 1
-
+        position = 0
         print("Username or password incorect :(")
         print()
         user = input("Username : ")
@@ -259,13 +267,93 @@ def system_gab_main(clients: list[Client]):
         r = system_gab_base()
         if r == 1:
             system_gab_check_balance(clients[customer_index])
-            r1 = input("Appuyez sur touche pour repartir\nEnter")
+            input("Appuyez sur touche pour repartir\nEnter")
         elif r == 2:
             money_deposit(clients[customer_index])
-            r1 = input("Appuyez sur touche pour repartir\nEnter")
+            input("Appuyez sur touche pour repartir\nEnter")
         elif r == 3:
             withdraw_money(clients[customer_index])
-            r1 = input("Appuyez sur touche pour repartir\nEnter")
+            input("Appuyez sur touche pour repartir\nEnter")
+        else:
+            message("Deconnexion\nA bientôt :)")
+            i = False
+
+
+# ------------------------------------------------------------------------------------------------------------------- #
+# ------------------------------------------------------------------------------------------------------------------- #
+
+
+# -------------------------------------------------------------------------------------------------------#
+#               the functions below are used in the customer account interface
+# -------------------------------------------------------------------------------------------------------#
+
+def customer_programme() -> int:
+    app_bar("CUSTOMER ACCOUNT ACTIVITY")
+    print()
+    print("1 : Profile")
+    print("2 : Transfert d'argent")
+    print("3 : Payement")
+    print("4 : Transfert d'argent (Courant vers Epargne)")
+    print("5 : Transfert d'argent (Epargne vers Courant)")
+    print("6 : Bloquer mon Compte (Epargne)")
+    print("7 : Exit")
+
+    response = input("Enter>> ")
+    i = True
+    while i:
+        response_verified = check_int(response)
+        if 1 <= response_verified <= 7:
+            response = response_verified
+            i = False
+
+    return int(response)
+
+
+def login_customer_account(clients: list[Client]) -> int:
+    found = False
+    position: int = 0
+    app_bar("CUSTOMER ACCOUNT LOGIN")
+    account_number = input("Client Number      : ")
+    account_number_verify = check_int(account_number)
+    passwd = input("Client Password  : ")
+
+    while not found:
+        for client in clients:
+            if account_number_verify == client.__ID__ and passwd == client.gab_account.password:
+                return position
+
+            position += 1
+        position = 0
+        print("Username or password incorrect :(")
+        print()
+        account_number = input("Client Number      : ")
+        account_number_verify = check_int(account_number)
+        passwd = input("Client Password  : ")
+
+
+def customer_account_main(clients: list[Client]):
+    i = True
+    customer_index: int = login_customer_account(clients)
+    while i:
+        r: int = customer_programme()
+        if r == 1:
+            clients[customer_index].profile()
+            input("Appuyez sur touche pour repartir\nEnter")
+        elif r == 2:
+            print("Coming soon")
+            input("Appuyez sur touche pour repartir\nEnter")
+        elif r == 3:
+            clients[customer_index].current_account.payment_invoice()
+            input("Appuyez sur touche pour repartir\nEnter")
+        elif r == 4:
+            clients[customer_index].current_account.transfer_of_current_to_saving(clients[customer_index])
+            input("Appuyez sur touche pour repartir\nEnter")
+        elif r == 5:
+            clients[customer_index].savings_account.current_savings_transfer(clients[customer_index])
+            input("Appuyez sur touche pour repartir\nEnter")
+        elif r == 6:
+            clients[customer_index].savings_account.lock_account()
+            input("Appuyez sur touche pour repartir\nEnter")
         else:
             message("Deconnexion\nA bientôt :)")
             i = False
