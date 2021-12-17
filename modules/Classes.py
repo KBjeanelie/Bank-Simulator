@@ -6,6 +6,11 @@ from messages import insufficient_balance_error, check_int, check_balance, sampl
 
 
 def ms(title: str):
+    """
+    this function print a simple message after an action occure
+    :param title: represent a message to print
+    :return:
+    """
     print("----------------------------------------------------------------------------------------")
     print(title)
     print("----------------------------------------------------------------------------------------")
@@ -25,7 +30,7 @@ class Humain:
     def __post_init__(self):
         Humain.count += 1
         self.__ID__: int = Humain.count
-        self.fullname = f"{self.firstname} {self.last_name}"
+        # self.fullname = f"{self.firstname} {self.last_name}"
 
     """
         GETTERS
@@ -34,8 +39,8 @@ class Humain:
     def __ID__(self):
         return self.__ID__
 
-    def fullname(self):
-        return self.fullname
+    # def fullname(self):
+    #    return self.fullname
 
     def lastname(self) -> str:
         """
@@ -148,7 +153,7 @@ class Humain:
 
 
 class Account:
-    count: int = 0
+    count: int = 0  # this variable is for counting the number of object created
 
     def __init__(self):
         Account.count += 1
@@ -159,20 +164,45 @@ class Account:
         self.tax: int | float = 0
         self.TVA: int = 1043
 
-    def bank_code(self):
+    def bank_code(self) -> int:
+        """
+            get the value of bank code
+        :return: int
+        """
         return self.bank_code
 
-    def branch_code(self):
+    def branch_code(self) -> int:
+        """
+            get the value of branch code
+        :return: int
+        """
         return self.branch_code
 
-    def account_number(self):
+    def account_number(self) -> int:
+        """
+            get the value of account number
+        :return: int
+        """
         return self.account_number
 
     def deposit(self, sum_add: float | int) -> bool:
+        """
+            allow the money deposit
+            Return True if all is good
+        :param sum_add: amount to deposit on account bank
+        :return:True | False
+        """
         self.amount += sum_add
         return True
 
     def withdraw_money(self, sum_remove: float | int) -> bool:
+        """
+            Allow the withdrawing money in a current account bank on abject
+            Return True if all is good
+            We remove also a tax for this methode
+        :param sum_remove: amount of withdrawing
+        :return: True | False
+        """
         self.tax = (sum_remove * 12) / 100
         if sum_remove + self.tax >= self.amount:
             return False
@@ -181,12 +211,26 @@ class Account:
         return True
 
     def get_account_number(self):
+        """
+            get the all value of account bank number
+        :return: str
+        """
         return str(self.bank_code) + str(self.branch_code) + str(self.account_number)
 
     def get_amount(self) -> int | float:
+        """
+            get the solde of an account bank maybe current account or savings account
+        :return: int or float
+        """
         return self.amount
 
     def bank_transfert(self, clients: list[Client]):
+        """
+        Allow sending money to another of account bank
+        We remove also a tax for this methode
+        :param clients: list of all account in the system
+        :return: void or None
+        """
         print("----------------------------------- Transfert d'argent ------------------------------")
         sender_account_number = input("Saisir le numéro du compte émetteur          : ")
         beneficiary_account_number = input("Saisir le numéro du compte bénéficiaire :")
@@ -226,6 +270,12 @@ class Account:
         sample_echec_message("Le numéro du compte bénéficiaire n'existe pas")
 
     def payment_invoice(self):
+        """
+        Allow the paiement of a produit
+        We use a cuurent account
+        We remove also a tax for this methode
+        :return: void or None
+        """
         print("------------------------------ Payement de Facture ------------------------------------------")
         product_name = input("Entrer le nom du produit  :")
         amount_product = input("Entrer le montant : ")
@@ -249,6 +299,11 @@ class CurrentAccount(Account):
         super(CurrentAccount, self).__init__()
 
     def transfer_of_current_to_saving(self, client):
+        """
+        Send money of current account to savings account
+        :param client: the current object
+        :return: void or None
+        """
         print()
         print("-------------------------- Transfert d'argent (Courant vers Epargne) -----------------------------")
         amount = input("Entrer le montant : ")
@@ -278,6 +333,11 @@ class SavingsAccount(Account):
         self.is_lock = False
 
     def current_savings_transfer(self, client):
+        """
+            Send money of savings account to current account
+            :param client: the current object
+            :return: void or None
+        """
         if self.is_lock:
             ms("Transfert non disponible\nVotre compte a étébloqué")
             return
@@ -304,6 +364,10 @@ class SavingsAccount(Account):
         self.tax = 0
 
     def lock_account(self):
+        """
+        Lock a savings account
+        :return:void or None
+        """
         print()
         print("-------------------------- Transfert d'argent (Courant vers Epargne) -----------------------------")
         print("Voulez vous bloqué votre compte ? (o/n) ")
@@ -349,6 +413,10 @@ class Client(Humain):
         self.gab_account = SystemGAB()
 
     def profile(self):
+        """
+            Display all information about a client of custemer account
+        :return: void or None
+        """
         print("--------------------------- Information  Personnelle -------------------------------")
         print("Nom                  :", self.lastname().upper())
         print("Prenom               :", self.firstname)

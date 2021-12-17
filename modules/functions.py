@@ -4,21 +4,49 @@ from messages import insufficient_balance_error, check_int, check_balance
 
 
 def message(m: str, count: str | int = ""):
+    """
+        Print a messages
+    :param m: message to print must be String
+    :param count:
+    :return:
+    """
     print("---------------------------------------------------------------------------------------------")
     print(m, count)
     print("---------------------------------------------------------------------------------------------")
 
 
 def app_bar(title: str):
+    """
+        Print an app bar
+    :param title: title of app bar must be String
+    :return: void or None
+    """
     print("---------------------------------------------------------------------------------------------")
     print(f"|                               {title}                                   |")
     print("---------------------------------------------------------------------------------------------")
+
+
+def __input__():
+    """
+        Just inputing something
+    :return:
+    """
+    print("Appuyez sur une touche pour repartir")
+    rep = input("Enter>> ")
 
 
 # --------------------------------------------------------------------------------------------------------#
 #               the functions below are used in the pragrammain  interface
 # -------------------------------------------------------------------------------------------------------#
 def views(q1, q2, q3, title) -> int:
+    """
+        Display all fuctionnalyty
+    :param q1: string
+    :param q2: string
+    :param q3: string
+    :param title: string
+    :return: int
+    """
     print("---------------------------------------------------------------------------------------------")
     print(f"|                                 KUB'S BANK For {title}                                     |")
     print("---------------------------------------------------------------------------------------------")
@@ -40,6 +68,10 @@ def views(q1, q2, q3, title) -> int:
 
 
 def programme_views() -> int:
+    """
+    display the programme view
+    :return: void or None
+    """
     rep = views("Casier Account", " Customer Account", "System GAB (Customer login)", "EveryOne")
     return rep
 
@@ -139,26 +171,35 @@ def cashier_login():
 
 
 def cashier_base():
+    """
+        Display the programme views of cashier interface
+    :return:
+    """
     rep = views("Lister les Client", "Ajouter un Client", "Supprimer un Client", "CASHIER")
     return rep
 
 
 def cashier_main(clients: list[Client]):
+    """
+        it is in this function that all the program takes place on the cashier interface
+    :param clients: listof all customer or client account
+    :return: void or None
+    """
     i = True
     if cashier_login():
         while i:
             r = cashier_base()
             if r == 1:
                 show_all_customers(clients)
-                input("Appuyez sur touche pour repartir\nEnter")
+                __input__()
             elif r == 2:
                 new_customers: Client = create_customer()
                 clients.append(new_customers)
-                input("Appuyez sur touche pour repartir\nEnter")
+                __input__()
             elif r == 3:
                 print("Coming soon")
                 # del_client(clients, 5)
-                input("Appuyez sur touche pour repartir\nEnter")
+                __input__()
             else:
                 message("Deconnexion\nA bientôt :)")
                 i = False
@@ -173,6 +214,10 @@ def cashier_main(clients: list[Client]):
 # -------------------------------------------------------------------------------------------------------#
 
 def choose_type_account():
+    """
+        Allowing the choice between current account and savings account
+    :return:
+    """
     print("Choisir le type de compte : ")
     print("1 : Courant")
     print("2 : Epargne")
@@ -185,6 +230,12 @@ def choose_type_account():
 
 
 def system_gab_login(clients: list[Client]) -> int:
+    """
+        this function allows the ATM account to authenticate and returns a boolean
+        Return the position of client
+        :param clients: list of Client
+        :return: int
+    """
     found = False
     position: int = 0
     app_bar("SYSTEM ATM LOGIN")
@@ -205,6 +256,11 @@ def system_gab_login(clients: list[Client]) -> int:
 
 
 def system_gab_check_balance(client: Client):
+    """
+        Display the solde
+    :param client: object
+    :return: void or None
+    """
     print("--------------------------------- CONSULTATION DU SOLDE -----------------------------------------")
     rep = choose_type_account()
     if rep == 1:
@@ -223,11 +279,20 @@ def system_gab_check_balance(client: Client):
 
 
 def system_gab_base():
+    """
+        Display the programme views of ATM system interface
+    :return:
+    """
     rep = views("Consulter son Solde", "Dépot d'argent", "Retrait d'argent", "GAB System")
     return rep
 
 
 def money_deposit(client: Client):
+    """
+    allow the money deposit
+    :param client: object
+    :return: void or None
+    """
     print("----------------------------- DEPOT D'ARGENT -----------------------------------")
     rep = choose_type_account()
     amount = input("Entrer la somme : ")
@@ -242,6 +307,11 @@ def money_deposit(client: Client):
 
 
 def withdraw_money(client: Client):
+    """
+     Allow the withdrawing money in a current account bank on abject
+    :param client: object
+    :return: void or None
+    """
     print("----------------------------- RETIRER DE L'ARGENT -----------------------------------")
     rep = choose_type_account()
     amount = input("Entrer le montant : ")
@@ -261,19 +331,24 @@ def withdraw_money(client: Client):
 
 
 def system_gab_main(clients: list[Client]):
+    """
+       it is in this function that all the program takes place on the ATM system interface
+   :param clients: listof all customer or client account
+   :return: void or None
+   """
     i = True
     customer_index: int = system_gab_login(clients)
     while i:
         r = system_gab_base()
         if r == 1:
             system_gab_check_balance(clients[customer_index])
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         elif r == 2:
             money_deposit(clients[customer_index])
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         elif r == 3:
             withdraw_money(clients[customer_index])
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         else:
             message("Deconnexion\nA bientôt :)")
             i = False
@@ -288,6 +363,10 @@ def system_gab_main(clients: list[Client]):
 # -------------------------------------------------------------------------------------------------------#
 
 def customer_programme() -> int:
+    """
+    Display all fuctionnalyty
+    :return: int
+    """
     app_bar("CUSTOMER ACCOUNT ACTIVITY")
     print()
     print("1 : Profile")
@@ -310,6 +389,12 @@ def customer_programme() -> int:
 
 
 def login_customer_account(clients: list[Client]) -> int:
+    """
+        this function allows the Customer or Client account to authenticate and returns a boolean
+        Return the position of client
+        :param clients: list of Client
+        :return: int
+    """
     found = False
     position: int = 0
     app_bar("CUSTOMER ACCOUNT LOGIN")
@@ -332,28 +417,33 @@ def login_customer_account(clients: list[Client]) -> int:
 
 
 def customer_account_main(clients: list[Client]):
+    """
+       it is in this function that all the program takes place on the Customer interface
+   :param clients: listof all customer or client account
+   :return: void or None
+   """
     i = True
     customer_index: int = login_customer_account(clients)
     while i:
         r: int = customer_programme()
         if r == 1:
             clients[customer_index].profile()
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         elif r == 2:
             print("Coming soon")
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         elif r == 3:
             clients[customer_index].current_account.payment_invoice()
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         elif r == 4:
             clients[customer_index].current_account.transfer_of_current_to_saving(clients[customer_index])
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         elif r == 5:
             clients[customer_index].savings_account.current_savings_transfer(clients[customer_index])
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         elif r == 6:
             clients[customer_index].savings_account.lock_account()
-            input("Appuyez sur touche pour repartir\nEnter")
+            __input__()
         else:
             message("Deconnexion\nA bientôt :)")
             i = False
