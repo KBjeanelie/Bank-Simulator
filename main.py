@@ -19,16 +19,3 @@ print(current_accounts)
 print(savings_account)
 print(sysgab)
 
-
-def login(s):
-    username = input("Username :")
-    pasword = input("Password  :")
-    for m in s:
-        if m[1] == username:
-            print("trouver")
-
-        if m[2] == pasword:
-            print("Password found")
-
-
-login(sysgab)
