@@ -1,43 +1,34 @@
-from Classes import Client
-from modules.functions import views, cashier_main, message, system_gab_main, customer_account_main
+import os.path
+import sqlite3
 
-# Create a liste vide of Customers
-Customers: list[Client] = []
+path_to_database = os.path.join("Database", "bank_database.db")
 
-# Create three customers for initialization the program
-customer1: Client = Client(last_name="Kumbembula", firstname="Jean Elie", birthday="25/01/1999",
-                           adress="50 rue nkouma brazzaville congo", email="jeaneliekubembula@gmail.com",
-                           sexe="M", tel="064838870")
-customer1.gab_account.set_username("elie")
-customer1.gab_account.set_password("elie1234")
+connexion = sqlite3.connect(path_to_database)
 
-customer2: Client = Client(last_name="Walter", firstname="Elijah", birthday="25/01/1999",
-                           adress="241 rue bandza brazzaville congo", email="elijahwalter2018@gmail.com",
-                           sexe="M", tel="064838870")
-customer2.gab_account.set_username("walter")
-customer2.gab_account.set_password("walter1234")
+cursor = connexion.cursor()
 
-customer3: Client = Client(last_name="Poba", firstname="Emmanuella", birthday="25/07/2003",
-                           adress="50 rue nkouma brazzaville congo", email="pobamanu@gmail.com",
-                           sexe="F", tel="064838070")
-customer3.gab_account.set_username("manue")
-customer3.gab_account.set_password("manue1234")
+customers = cursor.execute("SELECT * FROM Customers;").fetchall()
+accounts = cursor.execute("SELECT * FROM Account;").fetchall()
+current_accounts = cursor.execute("SELECT * FROM CurrentAccount;").fetchall()
+savings_account = cursor.execute("SELECT * FROM SavingsAccount;").fetchall()
+sysgab = cursor.execute("SELECT * FROM SystemGABUser;").fetchall()
 
-# add them into list
-Customers.append(customer1)
-Customers.append(customer2)
-Customers.append(customer3)
+print(customers)
+print(accounts)
+print(current_accounts)
+print(savings_account)
+print(sysgab)
 
-launch = True  # start the program
 
-while launch:
-    choice = views("Cashier Account", "Customer Account", "System ATM", "EveryOne")
-    if choice == 1:
-        cashier_main(Customers)
-    elif choice == 2:
-        customer_account_main(Customers)
-    elif choice == 3:
-        system_gab_main(Customers)
-    else:
-        message("A bientôt :)")  # Exit programme
-        launch = False
+def login(s):
+    username = input("Username :")
+    pasword = input("Password  :")
+    for m in s:
+        if m[1] == username:
+            print("trouver")
+
+        if m[2] == pasword:
+            print("Password found")
+
+
+login(sysgab)
