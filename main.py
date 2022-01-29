@@ -13,9 +13,3 @@ current_accounts = cursor.execute("SELECT * FROM CurrentAccount;").fetchall()
 savings_account = cursor.execute("SELECT * FROM SavingsAccount;").fetchall()
 sysgab = cursor.execute("SELECT * FROM SystemGABUser;").fetchall()
 
-print(customers)
-print(accounts)
-print(current_accounts)
-print(savings_account)
-print(sysgab)
-
