@@ -57,3 +57,10 @@ def deletion_succeeds():
 def logout_succeeded():
     basic_message_view("Deconexion ressit :)\nA bientôt !")
 
+
+def app_bar(title):
+    print("#################################################################################")
+    print(f"              {title}")
+    print("#################################################################################")
+
+

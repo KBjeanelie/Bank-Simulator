@@ -11,6 +11,15 @@ class Customers:
     sexe: str
     tel: str
 
+    def __init__(self, name, firstname, birthday, adress, email, sex, tel):
+        self.last_name = name
+        self.firstname = firstname
+        self.birthday = birthday
+        self.adress = adress
+        self.email = email
+        self.sexe = sex
+        self.tel = tel
+
     def profile(self):
         """
             Display all information about a client of custemer account
